@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ profile.developer }} | Portfolio</title>
+    <style>
+        :root {
+            --bg-dark: #07080d;
+            --surface-card: #0d0f19;
+            --surface-hover: #151828;
+            --neon-cyan: #00f2fe;
+            --neon-blue: #4facfe;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border-glow: #1e293b;
+            --grad: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-blue) 100%);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            margin: 0; padding: 0;
+        }
+
+        .portfolio-container { max-width: 1100px; margin: 0 auto; padding: 4rem 1.5rem; }
+
+        .hero-card {
+            background: rgba(13, 15, 25, 0.8); border: 1px solid var(--border-glow);
+            border-radius: 16px; padding: 3rem; text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            margin-bottom: 3rem; position: relative;
+        }
+
+        .hero-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--grad); }
+
+        /* Professional Picture Display Box */
+        .profile-img-container {
+            width: 130px;
+            height: 130px;
+            margin: 0 auto 1.5rem auto;
+            border-radius: 50%;
+            padding: 3px;
+            background: var(--grad);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+        }
+
+        .profile-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: var(--surface-card);
+            display: block;
+        }
+
+        .hero-card h1 {
+            font-size: 3.2rem; margin: 0; background: var(--grad);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;
+        }
+
+        .subtitle { font-size: 1.3rem; color: var(--text-secondary); margin: 0.5rem 0; font-weight: 400; }
+        .location-tag { color: var(--neon-cyan); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+        .cv-action-btn {
+            background: var(--grad); color: #07080d; font-weight: 700; text-decoration: none;
+            padding: 0.8rem 1.8rem; border-radius: 30px; display: inline-flex; align-items: center;
+            gap: 0.5rem; transition: transform 0.2s; margin-top: 1rem;
+        }
+        .cv-action-btn:hover { transform: translateY(-2px); }
+
+        .cert-container { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem; }
+        .cert-badge { background: rgba(0, 242, 254, 0.05); border: 1px solid rgba(0, 242, 254, 0.25); padding: 0.5rem 1.2rem; border-radius: 30px; font-size: 0.85rem; }
+
+        .control-panel { display: flex; justify-content: center; gap: 1rem; margin-bottom: 3rem; border-bottom: 1px solid var(--border-glow); padding-bottom: 1rem; }
+        .tab-btn { background: transparent; border: 1px solid transparent; color: var(--text-secondary); padding: 0.6rem 1.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; border-radius: 6px; }
+        .tab-btn.active { background: rgba(0, 242, 254, 0.08); border-color: var(--neon-cyan); color: var(--neon-cyan); }
+
+        .tab-view { display: none; animation: fadeIn 0.4s ease forwards; }
+        .tab-view.active-view { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 2rem; }
+        .project-card { background: var(--surface-card); border: 1px solid var(--border-glow); border-radius: 14px; padding: 2rem; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.3s; }
+        .project-card:hover { border-color: var(--neon-cyan); transform: translateY(-3px); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; }
+        .live-stat-bar { font-size: 0.85rem; color: #eab308; }
+        .description { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; margin: 1.5rem 0; flex-grow: 1; }
+        .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+        .tag { background: rgba(255, 255, 255, 0.04); font-size: 0.8rem; padding: 0.3rem 0.7rem; border-radius: 4px; }
+        
+        .github-btn { text-align: center; background: transparent; border: 1px solid var(--neon-blue); color: var(--text-primary); text-decoration: none; padding: 0.75rem; border-radius: 8px; font-weight: 600; transition: all 0.25s; }
+        .github-btn:hover { background: var(--grad); color: #07080d; border-color: transparent; }
+
+        .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
+        .skills-category { background: var(--surface-card); padding: 1.8rem; border-radius: 12px; border: 1px solid var(--border-glow); }
+        .skills-category h4 { margin: 0 0 1rem 0; color: var(--neon-cyan); border-bottom: 1px solid rgba(0, 242, 254, 0.1); padding-bottom: 0.5rem; }
+        .skills-category p { margin: 0; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.7; }
+
+        /* Simplified Clean Form CSS Layout */
+        .form-section { background: var(--surface-card); border: 1px solid var(--border-glow); padding: 2.5rem; border-radius: 14px; margin-top: 4rem; }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-size: 0.9rem; color: var(--text-primary); margin-bottom: 0.5rem; }
+        .form-control { width: 100%; padding: 0.8rem; background: #07080d; border: 1px solid var(--border-glow); border-radius: 6px; color: var(--text-primary); box-sizing: border-box; }
+        .form-control:focus { outline: none; border-color: var(--neon-cyan); }
+        .submit-btn { background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 0.8rem 2rem; border-radius: 6px; cursor: pointer; font-weight: 600; width: 100%; transition: all 0.25s; }
+        .submit-btn:hover { background: rgba(0,242,254,0.1); }
+
+        .contact-footer { margin-top: 4rem; text-align: center; padding: 2rem; border-top: 1px solid var(--border-glow); }
+        .links { display: flex; justify-content: center; gap: 2rem; margin-top: 1rem; }
+        .links a { color: var(--text-secondary); text-decoration: none; font-size: 0.95rem; }
+        .links a:hover { color: var(--neon-cyan); }
+    </style>
+</head>
+<body>
+
+    <div class="portfolio-container">
+        <!-- Profile Hub Card -->
+        <header class="hero-card">
+            <!-- Dynamic Image Pipeline Box -->
+            <div class="profile-img-container">
+                <img src="/static/profile.jpg" alt="{{ profile.developer }}" class="profile-img" onerror="this.src='https://placehold.co/150x150/0d0f19/00f2fe?text=TK';">
+            </div>
+
+            <h1>{{ profile.developer }}</h1>
+            <p class="subtitle">{{ profile.role }}</p>
+            <p class="location-tag">📍 {{ profile.contact.location }}</p>
+            
+            <a href="/download-cv" class="cv-action-btn">
+                Download Resume PDF
+            </a>
+
+            <div class="cert-container">
+                {% for cert in profile.certifications %}
+                    <span class="cert-badge">🛡️ {{ cert }}</span>
+                {% endfor %}
+            </div>
+        </header>
+
+        <nav class="control-panel">
+            <button class="tab-btn active" onclick="switchTab(event, 'projects-view')">Projects Portfolio</button>
+            <button class="tab-btn" onclick="switchTab(event, 'matrix-view')">Skills Matrix</button>
+        </nav>
+
+        <!-- VIEW 1: Projects Portfolio -->
+        <div id="projects-view" class="tab-view active-view">
+            <div class="card-container">
+                {% for project in projects %}
+                    <div class="project-card">
+                        <div>
+                            <div class="card-header">
+                                <h3>{{ project.title }}</h3>
+                                <span class="live-stat-bar">⭐ {{ project.stars }}</span>
+                            </div>
+                            <p class="description">{{ project.description }}</p>
+                        </div>
+                        <div>
+                            <div class="tags">
+                                {% for tag in project.tags %}
+                                    <span class="tag">{{ tag }}</span>
+                                {% endfor %}
+                            </div>
+                            <a href="{{ project.github_url }}" target="_blank" rel="noopener noreferrer" class="github-btn" style="display:block;">
+                                View on GitHub
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- VIEW 2: Technical Skills Matrix -->
+        <div id="matrix-view" class="tab-view">
+            <div class="skills-grid">
+                <div class="skills-category">
+                    <h4>Languages</h4>
+                    <p>{{ profile.skills.languages | join(' • ') }}</p>
+                </div>
+                <div class="skills-category">
+                    <h4>AI & Data Engineering</h4>
+                    <p>{{ profile.skills.data_ai | join(' • ') }}</p>
+                </div>
+                <div class="skills-category">
+                    <h4>Frameworks & Libraries</h4>
+                    <p>{{ profile.skills.frameworks | join(' • ') }}</p>
+                </div>
+                <div class="skills-category">
+                    <h4>Platforms & Tools</h4>
+                    <p>{{ profile.skills.tools | join(' • ') }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Simplified Contact Form -->
+        <section class="form-section">
+            <h2 style="margin-top:0; font-size:1.4rem; color:var(--neon-cyan);">Get In Touch</h2>
+            <form id="contactForm">
+                <div class="form-group">
+                    <label>Your Name</label>
+                    <input type="text" id="formName" class="form-control" required placeholder="Name or Company">
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="formEmail" class="form-control" required placeholder="name@domain.com">
+                </div>
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea id="formMessage" class="form-control" rows="4" required placeholder="Write your message here..."></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Send Message</button>
+            </form>
+            <p id="formStatus" style="margin-top: 1rem; font-size:0.9rem; display:none;"></p>
+        </section>
+
+        <footer class="contact-footer">
+            <div class="links">
+                <a href="mailto:{{ profile.contact.email }}">Email</a>
+                <a href="{{ profile.contact.linkedin }}" target="_blank">LinkedIn</a>
+                <a href="{{ profile.contact.github }}" target="_blank">GitHub</a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function switchTab(event, viewId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-view').forEach(view => view.classList.remove('active-view'));
+            event.currentTarget.classList.add('active');
+            document.getElementById(viewId).classList.add('active-view');
+        }
+
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const statusEl = document.getElementById('formStatus');
+            statusEl.style.display = 'block';
+            statusEl.style.color = 'var(--neon-blue)';
+            statusEl.textContent = 'Sending message...';
+
+            fetch('/submit-contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: document.getElementById('formName').value,
+                    email: document.getElementById('formEmail').value,
+                    message: document.getElementById('formMessage').value
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                statusEl.style.color = '#22c55e';
+                statusEl.textContent = '✔ Success! Message received.';
+                document.getElementById('contactForm').reset();
+            })
+            .catch(err => {
+                statusEl.style.color = '#ef4444';
+                statusEl.textContent = '❌ Failed to send message.';
+            });
+        });
+    </script>
+</body>
+</html>
