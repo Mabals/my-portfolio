@@ -1,262 +1,383 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ profile.developer }} | Portfolio</title>
-    <style>
-        :root {
-            --bg-dark: #07080d;
-            --surface-card: #0d0f19;
-            --surface-hover: #151828;
-            --neon-cyan: #00f2fe;
-            --neon-blue: #4facfe;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --border-glow: #1e293b;
-            --grad: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-blue) 100%);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ profile.developer }} — {{ profile.role }}</title>
+<meta name="description" content="Portfolio of {{ profile.developer }}, {{ profile.role }}.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b100e; --surface:#131c18; --surface-alt:#182420; --line:#28352f;
+    --text:#eceae2; --muted:#93a099; --muted-2:#65726b;
+    --amber:#e8a33d; --teal:#5fac9c; --max:1120px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;
+    font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;position:relative;
+  }
+  body::before{
+    content:'';position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.05;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  ::selection{background:var(--amber);color:#14100a;}
+  a{color:inherit;} img{max-width:100%;display:block;}
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 32px;position:relative;z-index:2;}
+  h1,h2,h3{font-family:'Fraunces',serif;font-weight:500;margin:0;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
 
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-primary);
-            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
-            margin: 0; padding: 0;
-        }
+  header{position:sticky;top:0;z-index:50;background:rgba(11,16,14,.86);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:68px;position:relative;z-index:2;max-width:var(--max);margin:0 auto;padding:0 32px;}
+  .nav-mark{font-family:'Fraunces',serif;font-weight:600;font-size:1.15rem;display:flex;align-items:center;gap:8px;text-decoration:none;}
+  .nav-mark .dot{width:7px;height:7px;background:var(--amber);border-radius:50%;display:inline-block;box-shadow:0 0 0 3px rgba(232,163,61,.15);}
+  .nav-links{display:flex;gap:34px;list-style:none;margin:0;padding:0;}
+  .nav-links a{text-decoration:none;color:var(--muted);font-size:.92rem;padding-bottom:2px;border-bottom:1px solid transparent;transition:color .15s ease,border-color .15s ease;}
+  .nav-links a:hover,.nav-links a.active{color:var(--text);border-color:var(--amber);}
+  .nav-cta{font-size:.85rem;color:var(--bg);background:var(--amber);padding:8px 16px;text-decoration:none;border-radius:2px;font-weight:500;white-space:nowrap;}
+  .nav-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.4rem;cursor:pointer;}
+  @media(max-width:820px){
+    .nav-links{position:fixed;top:68px;left:0;right:0;background:var(--surface);flex-direction:column;gap:0;border-bottom:1px solid var(--line);max-height:0;overflow:hidden;transition:max-height .25s ease;z-index:40;}
+    .nav-links.open{max-height:340px;}
+    .nav-links li{width:100%;}
+    .nav-links a{display:block;padding:16px 32px;border-bottom:1px solid var(--line);}
+    .nav-toggle{display:block;} .nav-cta{display:none;}
+  }
 
-        .portfolio-container { max-width: 1100px; margin: 0 auto; padding: 4rem 1.5rem; }
+  .hero{padding:64px 0 0;border-bottom:1px solid var(--line);overflow:hidden;position:relative;}
+  .hero-top{display:grid;grid-template-columns:230px 1fr;gap:48px;align-items:start;padding-bottom:44px;}
 
-        .hero-card {
-            background: rgba(13, 15, 25, 0.8); border: 1px solid var(--border-glow);
-            border-radius: 16px; padding: 3rem; text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-            margin-bottom: 3rem; position: relative;
-        }
+  .photo-frame{position:relative;width:230px;}
+  .hero-photo{
+    width:230px;height:280px;object-fit:cover;display:block;
+  }
+  .photo-frame::after{
+    content:'';position:absolute;top:-8px;left:-8px;right:8px;bottom:8px;border:1px solid var(--line);z-index:-1;
+  }
+  .hero-copy{overflow:hidden;}
+  .kicker{font-family:'IBM Plex Mono',monospace;font-size:.78rem;color:var(--teal);letter-spacing:.02em;margin-bottom:16px;}
+  .hero h1{
+    font-size:clamp(2.1rem,4.4vw,3.1rem);line-height:1.1;letter-spacing:-.01em;
+    animation:reveal-up .8s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .hero h1 em{font-style:italic;color:var(--amber);font-weight:600;}
+  .hero p.lede{max-width:56ch;color:var(--muted);font-size:1.05rem;margin-top:18px;line-height:1.65;animation:fade-in 1s ease .25s both;}
+  .hero-actions{display:flex;gap:14px;margin-top:26px;flex-wrap:wrap;animation:fade-in 1s ease .4s both;}
+  @keyframes reveal-up{from{transform:translateY(28px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+  @keyframes fade-in{from{opacity:0;}to{opacity:1;}}
 
-        .hero-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--grad); }
+  .btn{text-decoration:none;font-size:.9rem;padding:12px 20px;border-radius:2px;display:inline-flex;align-items:center;gap:8px;font-weight:500;transition:transform .15s ease;}
+  .btn:hover{transform:translateY(-1px);}
+  .btn-primary{background:var(--amber);color:#14100a;}
+  .btn-ghost{border:1px solid var(--line);color:var(--text);}
+  .btn-ghost:hover{border-color:var(--muted);}
 
-        /* Professional Picture Display Box */
-        .profile-img-container {
-            width: 130px;
-            height: 130px;
-            margin: 0 auto 1.5rem auto;
-            border-radius: 50%;
-            padding: 3px;
-            background: var(--grad);
-            box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
-        }
+  .stat-strip{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);}
+  .stat-cell{padding:20px 24px;border-left:1px solid var(--line);position:relative;}
+  .stat-cell:first-child{border-left:none;}
+  .stat-cell .stat-label{font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--muted-2);display:flex;align-items:center;gap:6px;margin-bottom:6px;}
+  .stat-cell .stat-value{font-family:'IBM Plex Mono',monospace;font-size:1.15rem;color:var(--text);}
+  .live-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);display:inline-block;animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.25;}}
+  @media(max-width:820px){
+    .hero-top{grid-template-columns:1fr;}
+    .photo-frame,.hero-photo{width:150px;height:185px;}
+    .stat-strip{grid-template-columns:repeat(2,1fr);}
+    .stat-cell:nth-child(2){border-left:none;}
+    .stat-cell:nth-child(3){border-left:none;border-top:1px solid var(--line);}
+    .stat-cell:nth-child(4){border-top:1px solid var(--line);}
+  }
 
-        .profile-img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            background-color: var(--surface-card);
-            display: block;
-        }
+  section{padding:72px 0;border-bottom:1px solid var(--line);position:relative;}
+  .section-label{display:flex;align-items:center;gap:10px;margin-bottom:32px;}
+  .section-label .sq{width:8px;height:8px;background:var(--amber);flex-shrink:0;}
+  .section-label span{font-size:.95rem;color:var(--muted);}
+  .section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:32px;flex-wrap:wrap;}
+  .section-head h2{font-size:clamp(1.5rem,3vw,2rem);}
 
-        .hero-card h1 {
-            font-size: 3.2rem; margin: 0; background: var(--grad);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;
-        }
+  .about-grid{display:grid;grid-template-columns:.9fr 1.4fr;gap:56px;}
+  .about-grid p{color:var(--muted);max-width:64ch;margin:0 0 16px;}
+  .location-block{font-family:'IBM Plex Mono',monospace;font-size:.82rem;color:var(--muted-2);line-height:1.9;}
+  .location-block b{color:var(--muted);display:block;font-family:'IBM Plex Sans',sans-serif;font-size:.75rem;margin-bottom:6px;}
+  @media(max-width:820px){.about-grid{grid-template-columns:1fr;gap:32px;}}
 
-        .subtitle { font-size: 1.3rem; color: var(--text-secondary); margin: 0.5rem 0; font-weight: 400; }
-        .location-tag { color: var(--neon-cyan); font-size: 0.9rem; margin-bottom: 1.5rem; }
+  .skill-row{display:grid;grid-template-columns:200px 1fr;gap:24px;padding:18px 0;border-top:1px solid var(--line);transition:background .15s ease;}
+  .skill-row:hover{background:rgba(232,163,61,.03);}
+  .skill-row:last-child{border-bottom:1px solid var(--line);}
+  .skill-cat{font-family:'IBM Plex Mono',monospace;font-size:.8rem;color:var(--teal);}
+  .skill-items{color:var(--muted);font-size:.96rem;}
+  @media(max-width:640px){.skill-row{grid-template-columns:1fr;gap:6px;}}
 
-        .cv-action-btn {
-            background: var(--grad); color: #07080d; font-weight: 700; text-decoration: none;
-            padding: 0.8rem 1.8rem; border-radius: 30px; display: inline-flex; align-items: center;
-            gap: 0.5rem; transition: transform 0.2s; margin-top: 1rem;
-        }
-        .cv-action-btn:hover { transform: translateY(-2px); }
+  .project-feature{
+    border:1px solid var(--line);background:var(--surface);padding:36px;margin-bottom:24px;position:relative;
+    border-left:2px solid var(--amber);
+  }
+  .project-tag{font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--amber);margin-bottom:14px;display:flex;gap:10px;align-items:center;}
+  .project-feature h3{font-size:1.55rem;margin-bottom:14px;}
+  .project-feature p{color:var(--muted);max-width:68ch;margin:0 0 20px;}
+  .stack-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+  .stack-tag{border:1px solid var(--line);color:var(--muted);font-size:.76rem;padding:5px 10px;font-family:'IBM Plex Mono',monospace;}
+  .project-links a{text-decoration:none;font-size:.88rem;color:var(--text);border-bottom:1px solid var(--amber);padding-bottom:2px;}
+  .project-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);}
+  .project-card{background:var(--bg);padding:30px;border-left:2px solid transparent;transition:border-color .2s ease,transform .2s ease;}
+  .project-card:hover{border-left-color:var(--teal);transform:translateX(2px);}
+  .project-card.wide{grid-column:1 / -1;}
+  .project-card.wide p{max-width:70ch;}
+  .project-card h4{font-family:'Fraunces',serif;font-weight:500;font-size:1.15rem;margin-bottom:10px;}
+  .project-card p{color:var(--muted);font-size:.92rem;margin:0 0 16px;max-width:44ch;}
+  .stars{color:var(--muted-2);}
+  @media(max-width:760px){.project-grid{grid-template-columns:1fr;}.project-feature{padding:26px;}}
 
-        .cert-container { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem; }
-        .cert-badge { background: rgba(0, 242, 254, 0.05); border: 1px solid rgba(0, 242, 254, 0.25); padding: 0.5rem 1.2rem; border-radius: 30px; font-size: 0.85rem; }
+  .record{display:grid;grid-template-columns:230px 1fr;gap:32px;padding:26px 0;border-top:1px solid var(--line);}
+  .record:last-child{border-bottom:1px solid var(--line);}
+  .record-meta .role{font-weight:500;color:var(--text);font-size:1rem;margin-bottom:4px;}
+  .record-meta .org{color:var(--muted);font-size:.92rem;}
+  .record-meta .dates{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--muted-2);margin-top:10px;}
+  .record ul{margin:0;padding-left:18px;color:var(--muted);}
+  .record li{margin-bottom:8px;}
+  .record li::marker{color:var(--teal);}
+  @media(max-width:700px){.record{grid-template-columns:1fr;gap:10px;}}
 
-        .control-panel { display: flex; justify-content: center; gap: 1rem; margin-bottom: 3rem; border-bottom: 1px solid var(--border-glow); padding-bottom: 1rem; }
-        .tab-btn { background: transparent; border: 1px solid transparent; color: var(--text-secondary); padding: 0.6rem 1.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; border-radius: 6px; }
-        .tab-btn.active { background: rgba(0, 242, 254, 0.08); border-color: var(--neon-cyan); color: var(--neon-cyan); }
+  .contact h2{font-size:clamp(1.9rem,4.6vw,2.7rem);max-width:16ch;}
+  .contact p.lede{color:var(--muted);max-width:52ch;margin-top:16px;font-size:1.02rem;}
+  .contact-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:32px;margin-top:36px;}
+  .contact-item b{display:block;font-size:.72rem;color:var(--muted-2);font-family:'IBM Plex Mono',monospace;margin-bottom:8px;}
+  .contact-item a{text-decoration:none;font-size:1rem;border-bottom:1px solid var(--line);padding-bottom:2px;}
+  .contact-item a:hover{border-color:var(--amber);}
+  @media(max-width:640px){.contact-grid{grid-template-columns:1fr;}}
 
-        .tab-view { display: none; animation: fadeIn 0.4s ease forwards; }
-        .tab-view.active-view { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .form-wrap{margin-top:48px;max-width:560px;}
+  .form-row{margin-bottom:16px;}
+  .form-row label{display:block;font-size:.82rem;color:var(--muted);margin-bottom:6px;}
+  .form-row input,.form-row textarea{width:100%;background:var(--surface);border:1px solid var(--line);color:var(--text);padding:11px 12px;font-family:'IBM Plex Sans',sans-serif;font-size:.95rem;border-radius:2px;}
+  .form-row input:focus,.form-row textarea:focus{outline:none;border-color:var(--amber);}
+  .form-submit{background:var(--amber);color:#14100a;border:none;padding:12px 22px;font-size:.9rem;font-weight:500;border-radius:2px;cursor:pointer;transition:transform .15s ease;}
+  .form-submit:hover{transform:translateY(-1px);}
+  #formStatus{margin-top:14px;font-size:.86rem;font-family:'IBM Plex Mono',monospace;}
 
-        .card-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 2rem; }
-        .project-card { background: var(--surface-card); border: 1px solid var(--border-glow); border-radius: 14px; padding: 2rem; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.3s; }
-        .project-card:hover { border-color: var(--neon-cyan); transform: translateY(-3px); }
-        .card-header { display: flex; justify-content: space-between; align-items: center; }
-        .live-stat-bar { font-size: 0.85rem; color: #eab308; }
-        .description { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; margin: 1.5rem 0; flex-grow: 1; }
-        .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
-        .tag { background: rgba(255, 255, 255, 0.04); font-size: 0.8rem; padding: 0.3rem 0.7rem; border-radius: 4px; }
-        
-        .github-btn { text-align: center; background: transparent; border: 1px solid var(--neon-blue); color: var(--text-primary); text-decoration: none; padding: 0.75rem; border-radius: 8px; font-weight: 600; transition: all 0.25s; }
-        .github-btn:hover { background: var(--grad); color: #07080d; border-color: transparent; }
-
-        .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
-        .skills-category { background: var(--surface-card); padding: 1.8rem; border-radius: 12px; border: 1px solid var(--border-glow); }
-        .skills-category h4 { margin: 0 0 1rem 0; color: var(--neon-cyan); border-bottom: 1px solid rgba(0, 242, 254, 0.1); padding-bottom: 0.5rem; }
-        .skills-category p { margin: 0; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.7; }
-
-        /* Simplified Clean Form CSS Layout */
-        .form-section { background: var(--surface-card); border: 1px solid var(--border-glow); padding: 2.5rem; border-radius: 14px; margin-top: 4rem; }
-        .form-group { margin-bottom: 1.25rem; }
-        .form-group label { display: block; font-size: 0.9rem; color: var(--text-primary); margin-bottom: 0.5rem; }
-        .form-control { width: 100%; padding: 0.8rem; background: #07080d; border: 1px solid var(--border-glow); border-radius: 6px; color: var(--text-primary); box-sizing: border-box; }
-        .form-control:focus { outline: none; border-color: var(--neon-cyan); }
-        .submit-btn { background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 0.8rem 2rem; border-radius: 6px; cursor: pointer; font-weight: 600; width: 100%; transition: all 0.25s; }
-        .submit-btn:hover { background: rgba(0,242,254,0.1); }
-
-        .contact-footer { margin-top: 4rem; text-align: center; padding: 2rem; border-top: 1px solid var(--border-glow); }
-        .links { display: flex; justify-content: center; gap: 2rem; margin-top: 1rem; }
-        .links a { color: var(--text-secondary); text-decoration: none; font-size: 0.95rem; }
-        .links a:hover { color: var(--neon-cyan); }
-    </style>
+  footer{padding:28px 0;}
+  .footer-row{display:flex;justify-content:space-between;color:var(--muted-2);font-size:.8rem;font-family:'IBM Plex Mono',monospace;flex-wrap:wrap;gap:8px;}
+</style>
 </head>
 <body>
 
-    <div class="portfolio-container">
-        <!-- Profile Hub Card -->
-        <header class="hero-card">
-            <!-- Dynamic Image Pipeline Box -->
-            <div class="profile-img-container">
-                <img src="/static/profile.jpg" alt="{{ profile.developer }}" class="profile-img" onerror="this.src='https://placehold.co/150x150/0d0f19/00f2fe?text=TK';">
-            </div>
+<header>
+  <nav class="nav">
+    <a href="#top" class="nav-mark"><span class="dot"></span>{{ profile.developer }}</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#about">Profile</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a class="nav-cta" href="mailto:{{ profile.contact.email }}">Email me</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">☰</button>
+  </nav>
+</header>
 
-            <h1>{{ profile.developer }}</h1>
-            <p class="subtitle">{{ profile.role }}</p>
-            <p class="location-tag">📍 {{ profile.contact.location }}</p>
-            
-            <a href="/download-cv" class="cv-action-btn">
-                Download Resume PDF
-            </a>
+<main id="top">
 
-            <div class="cert-container">
-                {% for cert in profile.certifications %}
-                    <span class="cert-badge">🛡️ {{ cert }}</span>
-                {% endfor %}
-            </div>
-        </header>
-
-        <nav class="control-panel">
-            <button class="tab-btn active" onclick="switchTab(event, 'projects-view')">Projects Portfolio</button>
-            <button class="tab-btn" onclick="switchTab(event, 'matrix-view')">Skills Matrix</button>
-        </nav>
-
-        <!-- VIEW 1: Projects Portfolio -->
-        <div id="projects-view" class="tab-view active-view">
-            <div class="card-container">
-                {% for project in projects %}
-                    <div class="project-card">
-                        <div>
-                            <div class="card-header">
-                                <h3>{{ project.title }}</h3>
-                                <span class="live-stat-bar">⭐ {{ project.stars }}</span>
-                            </div>
-                            <p class="description">{{ project.description }}</p>
-                        </div>
-                        <div>
-                            <div class="tags">
-                                {% for tag in project.tags %}
-                                    <span class="tag">{{ tag }}</span>
-                                {% endfor %}
-                            </div>
-                            <a href="{{ project.github_url }}" target="_blank" rel="noopener noreferrer" class="github-btn" style="display:block;">
-                                View on GitHub
-                            </a>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
+  <section class="hero">
+    <div class="wrap hero-top">
+      <div class="photo-frame">
+        <img class="hero-photo" src="{{ url_for('static', filename='profile.jpg') }}" alt="{{ profile.developer }}" onerror="this.parentElement.style.display='none'">
+      </div>
+      <div class="hero-copy">
+        <div class="kicker">{{ profile.contact.location.upper() }} — OPEN TO WORK</div>
+        <h1>Building tools that turn raw data into <em>decisions</em>.</h1>
+        <p class="lede">{{ profile.summary }}</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="{{ url_for('download_cv') }}">Download CV</a>
+          <a class="btn btn-ghost" href="{{ profile.contact.github }}" target="_blank" rel="noopener">GitHub ↗</a>
+          <a class="btn btn-ghost" href="{{ profile.contact.linkedin }}" target="_blank" rel="noopener">LinkedIn ↗</a>
         </div>
-
-        <!-- VIEW 2: Technical Skills Matrix -->
-        <div id="matrix-view" class="tab-view">
-            <div class="skills-grid">
-                <div class="skills-category">
-                    <h4>Languages</h4>
-                    <p>{{ profile.skills.languages | join(' • ') }}</p>
-                </div>
-                <div class="skills-category">
-                    <h4>AI & Data Engineering</h4>
-                    <p>{{ profile.skills.data_ai | join(' • ') }}</p>
-                </div>
-                <div class="skills-category">
-                    <h4>Frameworks & Libraries</h4>
-                    <p>{{ profile.skills.frameworks | join(' • ') }}</p>
-                </div>
-                <div class="skills-category">
-                    <h4>Platforms & Tools</h4>
-                    <p>{{ profile.skills.tools | join(' • ') }}</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Simplified Contact Form -->
-        <section class="form-section">
-            <h2 style="margin-top:0; font-size:1.4rem; color:var(--neon-cyan);">Get In Touch</h2>
-            <form id="contactForm">
-                <div class="form-group">
-                    <label>Your Name</label>
-                    <input type="text" id="formName" class="form-control" required placeholder="Name or Company">
-                </div>
-                <div class="form-group">
-                    <label>Email Address</label>
-                    <input type="email" id="formEmail" class="form-control" required placeholder="name@domain.com">
-                </div>
-                <div class="form-group">
-                    <label>Message</label>
-                    <textarea id="formMessage" class="form-control" rows="4" required placeholder="Write your message here..."></textarea>
-                </div>
-                <button type="submit" class="submit-btn">Send Message</button>
-            </form>
-            <p id="formStatus" style="margin-top: 1rem; font-size:0.9rem; display:none;"></p>
-        </section>
-
-        <footer class="contact-footer">
-            <div class="links">
-                <a href="mailto:{{ profile.contact.email }}">Email</a>
-                <a href="{{ profile.contact.linkedin }}" target="_blank">LinkedIn</a>
-                <a href="{{ profile.contact.github }}" target="_blank">GitHub</a>
-            </div>
-        </footer>
+      </div>
     </div>
+    <div class="wrap">
+      <div class="stat-strip">
+        <div class="stat-cell"><span class="stat-label"><span class="live-dot"></span>CURRENTLY</span><span class="stat-value" style="font-size:.95rem;">{{ profile.experience[0].role }}</span></div>
+        <div class="stat-cell"><span class="stat-label">PROJECTS SHIPPED</span><span class="stat-value">{{ '%02d' % projects|length }}</span></div>
+        <div class="stat-cell"><span class="stat-label">CERTIFICATIONS</span><span class="stat-value">{{ '%02d' % profile.certifications|length }}</span></div>
+        <div class="stat-cell"><span class="stat-label">CORE STACK</span><span class="stat-value" style="font-size:.95rem;">Py · TS · SQL</span></div>
+      </div>
+    </div>
+  </section>
 
-    <script>
-        function switchTab(event, viewId) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-view').forEach(view => view.classList.remove('active-view'));
-            event.currentTarget.classList.add('active');
-            document.getElementById(viewId).classList.add('active-view');
-        }
+  <section id="about">
+    <div class="wrap">
+      <div class="section-label"><span class="sq"></span><span>Profile</span></div>
+      <div class="about-grid">
+        <div class="location-block">
+          <b>Based in</b>{{ profile.contact.location }}<br>Gauteng, South Africa
+          <br><br>
+          <b>Certifications</b>
+          {% for cert in profile.certifications %}{{ cert }}{% if not loop.last %}<br>{% endif %}{% endfor %}
+          <br><br>
+          <b>Full history</b>
+          <a href="#experience" style="color:var(--teal);">Experience &amp; education ↓</a>
+        </div>
+        <div>
+          <p>{{ profile.summary }}</p>
+          <p>My projects sit at the intersection of full-stack development, applied AI, and data analysis: a football analytics platform with AI-generated match insight, a school management system, a predictive sports-modeling engine built on Poisson distributions, and a couple of straight-up data cleaning and BI dashboards. Across all of them the throughline is the same — real data in, useful signal out.</p>
+          <p>I'm looking for a team where I can keep growing across that full stack: the application layer, the data pipeline underneath it, and the analysis on top.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const statusEl = document.getElementById('formStatus');
-            statusEl.style.display = 'block';
-            statusEl.style.color = 'var(--neon-blue)';
-            statusEl.textContent = 'Sending message...';
+  <section id="skills">
+    <div class="wrap">
+      <div class="section-label"><span class="sq"></span><span>Skill sheet</span></div>
+      <div class="section-head"><h2>What I work with</h2></div>
+      {% for category, items in profile.skills.items() %}
+      <div class="skill-row">
+        <div class="skill-cat">{{ category.upper() }}</div>
+        <div class="skill-items">{{ items|join(', ') }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
 
-            fetch('/submit-contact', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: document.getElementById('formName').value,
-                    email: document.getElementById('formEmail').value,
-                    message: document.getElementById('formMessage').value
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                statusEl.style.color = '#22c55e';
-                statusEl.textContent = '✔ Success! Message received.';
-                document.getElementById('contactForm').reset();
-            })
-            .catch(err => {
-                statusEl.style.color = '#ef4444';
-                statusEl.textContent = '❌ Failed to send message.';
-            });
-        });
-    </script>
+  <section id="projects">
+    <div class="wrap">
+      <div class="section-label"><span class="sq"></span><span>Match log</span></div>
+      <div class="section-head">
+        <h2>Selected projects</h2>
+        <a href="{{ profile.contact.github }}" target="_blank" rel="noopener" style="font-size:.88rem;text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:2px;">All repositories ↗</a>
+      </div>
+
+      {% for project in projects if project.featured %}
+      <div class="project-feature">
+        <span class="project-tag">FEATURED{% if project.stars %} <span class="stars">· ★ {{ project.stars }}</span>{% endif %}</span>
+        <h3>{{ project.title }}</h3>
+        <p>{{ project.description }}</p>
+        <div class="stack-row">{% for tag in project.tags %}<span class="stack-tag">{{ tag }}</span>{% endfor %}</div>
+        <div class="project-links"><a href="{{ project.github_url }}" target="_blank" rel="noopener">View repository ↗</a></div>
+      </div>
+      {% endfor %}
+
+      <div class="project-grid">
+        {% for project in projects if not project.featured %}
+        <div class="project-card{% if loop.last %} wide{% endif %}">
+          <span class="project-tag">{% if project.stars %}<span class="stars">★ {{ project.stars }}</span>{% else %}&nbsp;{% endif %}</span>
+          <h4>{{ project.title }}</h4>
+          <p>{{ project.description }}</p>
+          <div class="stack-row">{% for tag in project.tags %}<span class="stack-tag">{{ tag }}</span>{% endfor %}</div>
+          <div class="project-links"><a href="{{ project.github_url }}" target="_blank" rel="noopener">View repository ↗</a></div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section id="experience">
+    <div class="wrap">
+      <div class="section-label"><span class="sq"></span><span>Career</span></div>
+      <div class="section-head"><h2>Experience &amp; education</h2></div>
+
+      {% for job in profile.experience %}
+      <div class="record">
+        <div class="record-meta">
+          <div class="role">{{ job.role }}</div>
+          <div class="org">{{ job.org }}</div>
+          <div class="dates">{{ job.dates.upper() }}</div>
+        </div>
+        <ul>{% for b in job.bullets %}<li>{{ b }}</li>{% endfor %}</ul>
+      </div>
+      {% endfor %}
+
+      {% for ed in profile.education %}
+      <div class="record">
+        <div class="record-meta">
+          <div class="role">{{ ed.degree }}</div>
+          <div class="org">{{ ed.school }}</div>
+          <div class="dates">{{ ed.dates.upper() }}</div>
+        </div>
+        <div></div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section id="contact" style="border-bottom:none;">
+    <div class="wrap contact">
+      <div class="section-label"><span class="sq"></span><span>Contact</span></div>
+      <h2>Let's build something worth measuring.</h2>
+      <p class="lede">Open to full-stack developer, technical analyst, and data-adjacent roles. Email is fastest, or use the form below.</p>
+      <div class="contact-grid">
+        <div class="contact-item"><b>EMAIL</b><a href="mailto:{{ profile.contact.email }}">{{ profile.contact.email }}</a></div>
+        <div class="contact-item"><b>PHONE</b><a href="tel:{{ profile.contact.phone|replace(' ', '') }}">{{ profile.contact.phone }}</a></div>
+        <div class="contact-item"><b>LINKEDIN</b><a href="{{ profile.contact.linkedin }}" target="_blank" rel="noopener">View profile ↗</a></div>
+        <div class="contact-item"><b>GITHUB</b><a href="{{ profile.contact.github }}" target="_blank" rel="noopener">github.com/Mabals ↗</a></div>
+      </div>
+
+      <form class="form-wrap" id="contactForm">
+        <div class="form-row"><label for="formName">Name</label><input id="formName" type="text" required></div>
+        <div class="form-row"><label for="formEmail">Email</label><input id="formEmail" type="email" required></div>
+        <div class="form-row"><label for="formMessage">Message</label><textarea id="formMessage" rows="4" required></textarea></div>
+        <button type="submit" class="form-submit">Send message</button>
+        <p id="formStatus"></p>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap footer-row">
+    <span>{{ profile.developer.upper() }} — SOWETO, ZA</span>
+    <span>© 2026</span>
+  </div>
+</footer>
+
+<script>
+  const toggle = document.getElementById('navToggle');
+  const links = document.getElementById('navLinks');
+  toggle.addEventListener('click', () => links.classList.toggle('open'));
+  links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => links.classList.remove('open')));
+
+  const sections = document.querySelectorAll('section[id]');
+  const navAnchors = document.querySelectorAll('.nav-links a');
+  const setActive = () => {
+    let current = '';
+    sections.forEach(sec => { if (window.scrollY >= sec.offsetTop - 120) current = sec.id; });
+    navAnchors.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
+  };
+  window.addEventListener('scroll', setActive);
+  setActive();
+
+  document.getElementById('contactForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const statusEl = document.getElementById('formStatus');
+    statusEl.style.color = 'var(--muted)';
+    statusEl.textContent = 'Sending…';
+
+    fetch('/submit-contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: document.getElementById('formName').value,
+        email: document.getElementById('formEmail').value,
+        message: document.getElementById('formMessage').value
+      })
+    })
+      .then(res => res.json().then(data => ({ ok: res.ok, data })))
+      .then(({ ok, data }) => {
+        if (!ok) throw new Error(data.message || 'Something went wrong.');
+        statusEl.style.color = 'var(--teal)';
+        statusEl.textContent = 'Message sent — thanks, I\u2019ll get back to you soon.';
+        document.getElementById('contactForm').reset();
+      })
+      .catch(err => {
+        statusEl.style.color = '#d97757';
+        statusEl.textContent = err.message || 'Failed to send. Please email me directly.';
+      });
+  });
+</script>
+
 </body>
 </html>
