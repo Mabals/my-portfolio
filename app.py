@@ -17,8 +17,9 @@ PROFILE_DATA = {
     "summary": (
         "Ambitious and solutions-driven professional with a background in Information "
         "Technology, currently gaining structured experience as a Full-Stack Developer "
-        "intern. I like turning abstract business rules into secure, working applications "
-        "— and messy datasets into a clear story."
+        "(Work-Integrated Learning) at Mindworx Consulting & Academy. I like turning "
+        "abstract business rules into secure, working applications — and messy datasets "
+        "into a clear story — and I'm always picking up new tools along the way."
     ),
     "certifications": [
         "PCAP — Certified Associate Python Programmer",
